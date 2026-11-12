@@ -21,3 +21,14 @@ variable "app_namespace" {
   type        = string
   default     = "apps"
 }
+
+###############################################################################
+###   RECUERDA QUE DEBE ESTAR EL SECRETO DE LA BASE DE DATOS EN GITHUB (Settings -> Secrets and variables -> Actions -> New repository secret)   ##
+# y que debe ser llamado db_password, para que el workflow de GitHub Actions pueda desplegar la app en EKS y conectarse a la base de datos RDS MySQL
+###############################################################################
+
+variable "db_password" {
+  description = "Contraseña maestra para la base de datos MySQL en RDS"
+  type        = string
+  sensitive   = true
+}

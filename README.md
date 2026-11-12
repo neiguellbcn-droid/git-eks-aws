@@ -51,55 +51,48 @@ El flujo de trabajo en `.github/workflows/deploy.yml` soporta ejecución automá
   * `destroy`: Elimina de forma ordenada los balanceadores, nodos, clúster EKS y componentes de red para evitar costos innecesarios cuando el entorno no está en uso.
 
 ---
-
-## Verificación del Clúster
-
-Una vez finalizado el despliegue, puedes conectar tu terminal local utilizando AWS CLI y `kubectl`:
-
-```bash
-# Actualizar configuración local de kubeconfig
-aws eks update-kubeconfig --region eu-west-1 --name laps_eks_prod
-
-# Verificar estado de los nodos y pods del sistema
-kubectl get nodes
-kubectl get pods -A
-
-# Obtener la URL pública del Application Load Balancer
-kubectl get ingress -n apps
-```
 ## Diagrama de Arquitectura
 
 ```mermaid
 flowchart TB
     subgraph GitHub ["GitHub (CI/CD)"]
-        Repo["Repositorio<br/>(Terraform + K8s)"]
+        Repo["Repositorio<br/>(Terraform + App)"]
         Actions["GitHub Actions<br/>(deploy.yml)"]
         Repo -->|push / dispatch| Actions
     end
 
     subgraph AWS ["AWS Cloud (eu-west-1)"]
-        IAM["AWS IAM<br/>(OIDC Provider & Roles)"]
+        IAM["AWS IAM<br/>(OIDC Provider & IRSA)"]
         S3[("Amazon S3<br/>(terraform.tfstate)")]
+        ECR["Amazon ECR<br/>(Docker Registry)"]
+        Route53["Amazon Route 53<br/>(DNS Registro A / Alias)"]
 
         Actions <-->|1. Autenticación OIDC| IAM
-        Actions <-->|2. Lee / Guarda Estado| S3
+        Actions <-->|2. Estado Remoto| S3
+        Actions -->|3. Push Imagen Docker| ECR
 
         subgraph VPC ["VPC Aislada (Multi-AZ)"]
-            ALB["Application Load Balancer<br/>(Internet-Facing)"]
+            subgraph PublicSubnets ["Subredes Públicas"]
+                ALB["Application Load Balancer<br/>(Internet-Facing)"]
+            end
 
-            subgraph EKS ["Amazon EKS Cluster"]
-                ControlPlane["EKS Control Plane"]
-                
-                subgraph Nodes ["Managed Node Group (EC2 Spot ARM)"]
-                    ALBController["AWS Load Balancer Controller<br/>(Helm + IRSA)"]
-                    DemoApp["Pods: Demo App<br/>(Namespace: apps)"]
+            subgraph PrivateSubnets ["Subredes Privadas"]
+                subgraph EKS ["Amazon EKS Cluster"]
+                    subgraph Nodes ["Managed Node Group (EC2 Spot ARM)"]
+                        ALBController["AWS Load Balancer Controller"]
+                        DemoApp["Pods: App / Backend<br/>(Namespace: apps)"]
+                    end
                 end
+                RDS[("Amazon RDS<br/>(MySQL 8.0)")]
             end
         end
     end
 
-    User(("Usuario / Navegador")) -->|HTTP| ALB
+    User(("Usuario / Navegador")) -->|HTTPS / HTTP| Route53
+    Route53 -->|Apunta al DNS| ALB
     ALB -->|Enruta tráfico| DemoApp
-    ALBController -.->|Provisiona y gestiona| ALB
-    Actions -->|3. Terraform Apply / Destroy| EKS
+    DemoApp <-->|Consultas SQL (Puerto 3306)| RDS
+    ECR -.->|Pull Imagen| DemoApp
+    ALBController -.->|Gestiona| ALB
+    Actions -->|4. Terraform Apply / Destroy| EKS
 ```
