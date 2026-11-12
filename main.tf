@@ -98,7 +98,7 @@ resource "helm_release" "aws_lb_controller" {
         create = true
         name   = "aws-load-balancer-controller"
         annotations = {
-          "://amazonaws.com" = module.lb_role.iam_role_arn
+          "eks.amazonaws" = module.lb_role.iam_role_arn
         }
       }
     })
