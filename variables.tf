@@ -11,13 +11,13 @@ variable "cluster_name" {
 }
 
 variable "kubernetes_version" {
-  description = "Versión de Kubernetes (usa una reciente para evitar recargos de soporte extendido)"
+  description = "Versión de Kubernetes"
   type        = string
   default     = "1.31"
 }
 
 variable "app_namespace" {
-  description = "Namespace para tus aplicaciones"
+  description = "Namespace para aplicaciones en Kubernetes"
   type        = string
   default     = "mi-app"
 }

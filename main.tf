@@ -4,7 +4,7 @@ locals {
   azs = slice(data.aws_availability_zones.available.names, 0, 2)
 }
 
-# 1. Red VPC optimizada para bajo coste
+# 1. Red VPC optimizada para bajo coste por solicitud de EKS.
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0"
