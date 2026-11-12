@@ -67,3 +67,39 @@ kubectl get pods -A
 # Obtener la URL pública del Application Load Balancer
 kubectl get ingress -n apps
 ```
+## Diagrama de Arquitectura
+
+```mermaid
+flowchart TB
+    subgraph GitHub ["GitHub (CI/CD)"]
+        Repo["Repositorio<br/>(Terraform + K8s)"]
+        Actions["GitHub Actions<br/>(deploy.yml)"]
+        Repo -->|push / dispatch| Actions
+    end
+
+    subgraph AWS ["AWS Cloud (eu-west-1)"]
+        IAM["AWS IAM<br/>(OIDC Provider & Roles)"]
+        S3[("Amazon S3<br/>(terraform.tfstate)")]
+
+        Actions <-->|1. Autenticación OIDC| IAM
+        Actions <-->|2. Lee / Guarda Estado| S3
+
+        subgraph VPC ["VPC Aislada (Multi-AZ)"]
+            ALB["Application Load Balancer<br/>(Internet-Facing)"]
+
+            subgraph EKS ["Amazon EKS Cluster"]
+                ControlPlane["EKS Control Plane"]
+                
+                subgraph Nodes ["Managed Node Group (EC2 Spot ARM)"]
+                    ALBController["AWS Load Balancer Controller<br/>(Helm + IRSA)"]
+                    DemoApp["Pods: Demo App<br/>(Namespace: apps)"]
+                end
+            end
+        end
+    end
+
+    User(("Usuario / Navegador")) -->|HTTP| ALB
+    ALB -->|Enruta tráfico| DemoApp
+    ALBController -.->|Provisiona y gestiona| ALB
+    Actions -->|3. Terraform Apply / Destroy| EKS
+```
