@@ -19,5 +19,5 @@ variable "kubernetes_version" {
 variable "app_namespace" {
   description = "Namespace para aplicaciones en Kubernetes"
   type        = string
-  default     = "mi-app"
+  default     = "apps"
 }

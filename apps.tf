@@ -1,7 +1,7 @@
 resource "kubernetes_deployment" "demo_app" {
   metadata {
     name      = "web-demo"
-    namespace = kubernetes_namespace.apps.metadata.name
+    namespace = kubernetes_namespace_v1.apps.metadata[0].name
     labels    = { app = "web-demo" }
   }
 

@@ -108,7 +108,7 @@ resource "helm_release" "aws_lb_controller" {
 }
 
 # 5. Namespace de aplicaciones
-resource "kubernetes_namespace" "apps" {
+resource "kubernetes_namespace_v1" "apps" {
   metadata {
     name = var.app_namespace
   }
