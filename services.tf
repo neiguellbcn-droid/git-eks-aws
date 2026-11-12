@@ -21,8 +21,8 @@ resource "aws_security_group" "mysql_sg" {
   vpc_id      = module.vpc.vpc_id
 
   ingress {
-    from_port       = 3306
-    to_port         = 3306
+    from_port       = var.db_forward_port
+    to_port         = var.db_instance_port
     protocol        = "tcp"
     security_groups = [module.eks.node_security_group_id]
   }
@@ -44,10 +44,10 @@ resource "aws_db_instance" "mysql" {
   publicly_accessible    = false
 }
 
-# 4. DNS con Route 53 
-/*
+#· 4. DNS con Route 53 
+
 data "aws_route53_zone" "main" {
-  name         = "enreach$.com"
+  name         = var.dns_zone
   private_zone = false
 }
 
@@ -69,4 +69,4 @@ resource "aws_route53_record" "app_dns" {
     evaluate_target_health = true
   }
 }
-*/
+
