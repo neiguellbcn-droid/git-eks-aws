@@ -45,7 +45,7 @@ resource "kubernetes_deployment" "demo_app" {
 resource "kubernetes_service" "demo_app" {
   metadata {
     name      = "web-demo-svc"
-    namespace = kubernetes_namespace.apps.metadata.name
+    namespace = kubernetes_namespace_v1.apps.metadata[0].name
   }
 
   spec {
