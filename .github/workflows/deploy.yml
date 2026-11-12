@@ -31,24 +31,25 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
  
+
       - name: Autenticar en AWS con OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Instalar Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.11.0
+      # - name: Instalar Terraform
+      #   uses: hashicorp/setup-terraform@v3
+      #   with:
+      #     terraform_version: 1.11.0
 
-      - name: Terraform Init
-        run: terraform init
+      # - name: Terraform Init
+      #   run: terraform init
 
-      - name: Terraform Apply
-        if: github.event.inputs.action != 'destroy'
-        run: terraform apply -auto-approve
+      # - name: Terraform Apply
+      #   if: github.event.inputs.action != 'destroy'
+      #   run: terraform apply -auto-approve
 
-      - name: Terraform Destroy
-        if: github.event.inputs.action == 'destroy'
-        run: terraform destroy -auto-approve
+      # - name: Terraform Destroy
+      #   if: github.event.inputs.action == 'destroy'
+      #   run: terraform destroy -auto-approve
