@@ -87,7 +87,7 @@ flowchart TB
             end
         end
     end
-
+```
     User(("Usuario / Navegador")) -->|HTTPS / HTTP| Route53
     Route53 -->|Apunta al DNS| ALB
     ALB -->|Enruta tráfico| DemoApp
@@ -95,4 +95,3 @@ flowchart TB
     ECR -.->|Pull Imagen| DemoApp
     ALBController -.->|Gestiona| ALB
     Actions -->|4. Terraform Apply / Destroy| EKS
-```
