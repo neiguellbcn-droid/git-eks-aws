@@ -1,68 +1,82 @@
-resource "kubernetes_deployment" "demo_app" {
+resource "kubernetes_deployment_v1" "spot_app" {
   metadata {
-    name      = "web-demo"
+    name      = "spot-app"
     namespace = kubernetes_namespace_v1.apps.metadata[0].name
-    labels    = { app = "web-demo" }
   }
 
   spec {
-    replicas = 2
+    replicas = 1
 
     selector {
-      match_labels = { app = "web-demo" }
+      match_labels = {
+        app = "spot-app"
+      }
     }
 
     template {
       metadata {
-        labels = { app = "web-demo" }
+        labels = {
+          app = "spot-app"
+        }
       }
 
       spec {
         container {
-          name  = "podinfo"
-          image = "ghcr.io/stefanprodan/podinfo:6.7.0"
+          name  = "wordpress"
+          image = "wordpress:latest" # Compatible con nodos ARM64 Spot
 
           port {
-            container_port = 9898
+            container_port = 80
           }
 
-          resources {
-            requests = {
-              cpu    = "50m"
-              memory = "64Mi"
-            }
-            limits = {
-              cpu    = "200m"
-              memory = "128Mi"
-            }
+          # Conexión automática con la base de datos RDS MySQL
+          env {
+            name  = "WORDPRESS_DB_HOST"
+            value = aws_db_instance.mysql.endpoint
+          }
+          env {
+            name  = "WORDPRESS_DB_USER"
+            value = aws_db_instance.mysql.username
+          }
+          env {
+            name  = "WORDPRESS_DB_PASSWORD"
+            value = var.db_password
+          }
+          env {
+            name  = "WORDPRESS_DB_NAME"
+            value = aws_db_instance.mysql.db_name
           }
         }
       }
     }
   }
+
+  depends_on = [aws_db_instance.mysql]
 }
 
-resource "kubernetes_service" "demo_app" {
+resource "kubernetes_service_v1" "spot_app" {
   metadata {
-    name      = "web-demo-svc"
+    name      = "spot-app-service"
     namespace = kubernetes_namespace_v1.apps.metadata[0].name
   }
 
   spec {
-    selector = { app = "web-demo" }
+    selector = {
+      app = "spot-app"
+    }
 
     port {
       port        = 80
-      target_port = 9898
+      target_port = 80
     }
 
-    type = "ClusterIP"
+    type = "NodePort"
   }
 }
 
-resource "kubernetes_ingress_v1" "demo_app" {
+resource "kubernetes_ingress_v1" "spot_app" {
   metadata {
-    name      = "web-demo-ingress"
+    name      = "spot-app-ingress"
     namespace = kubernetes_namespace_v1.apps.metadata[0].name
     annotations = {
       "alb.ingress.kubernetes.io/scheme"      = "internet-facing"
@@ -81,7 +95,7 @@ resource "kubernetes_ingress_v1" "demo_app" {
 
           backend {
             service {
-              name = kubernetes_service.demo_app.metadata[0].name
+              name = kubernetes_service_v1.spot_app.metadata[0].name
               port {
                 number = 80
               }
