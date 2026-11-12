@@ -84,7 +84,7 @@ module "lb_role" {
 # 4. Instalación del AWS Load Balancer Controller vía Helm
 resource "helm_release" "aws_lb_controller" {
   name       = "aws-load-balancer-controller"
-  repository = "https://github.io"
+  repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
   namespace  = "kube-system"
   wait       = true
