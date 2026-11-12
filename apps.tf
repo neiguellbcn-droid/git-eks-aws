@@ -63,7 +63,7 @@ resource "kubernetes_service" "demo_app" {
 resource "kubernetes_ingress_v1" "demo_app" {
   metadata {
     name      = "web-demo-ingress"
-    namespace = kubernetes_namespace.apps.metadata.name
+    namespace = kubernetes_namespace_v1.apps.metadata[0].name
     annotations = {
       "alb.ingress.kubernetes.io/scheme"      = "internet-facing"
       "alb.ingress.kubernetes.io/target-type" = "ip"
