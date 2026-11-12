@@ -95,3 +95,4 @@ flowchart TB
     ECR -.->|Pull Imagen| DemoApp
     ALBController -.->|Gestiona| ALB
     Actions -->|4. Terraform Apply / Destroy| EKS
+    
