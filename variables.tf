@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "cluster_name" {
   description = "Nombre del clúster EKS"
   type        = string
-  default     = "lab-eks-prod"
+  default     = "eks-aws-prod"
 }
 
 variable "kubernetes_version" {
