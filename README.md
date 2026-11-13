@@ -25,7 +25,7 @@ La arquitectura está diseñada siguiendo buenas prácticas de seguridad, optimi
 │   └── workflows/
 │       └── deploy.yml      # Pipeline de CI/CD para aplicar o destruir la infraestructura
 ├── main.tf                 # Definición de VPC, clúster EKS, roles IRSA y Helm releases
-├── autoescaling.tf         # Definición de Autoescalado
+├── autoscaling.tf         # Definición de Autoescalado
 ├── providers.tf            # Configuración de backend S3 y proveedores (AWS, Kubernetes, Helm)
 ├── apps.tf                 # Manifiestos de Kubernetes (Namespace, Deployment, Service e Ingress)
 └── variables.tf            # Variables de parametrización del entorno
