@@ -8,12 +8,13 @@ La arquitectura está diseñada siguiendo buenas prácticas de seguridad, optimi
 
 ## Arquitectura y Características Principales
 
-* **Orquestación de Contenedores (Amazon EKS):** Plano de control gestionado en la región `eu-west-1` (Irlanda) con autenticación basada en API (`API_AND_CONFIG_MAP`).
-* **Red Aislada (VPC):** Configuración de red con subredes públicas y privadas en múltiples zonas de disponibilidad, etiquetadas para el descubrimiento automático de balanceadores de carga (`kubernetes.io/role/elb`).
+* **Orquestación de contenedores (Amazon EKS):** Plano de control gestionado en la región `eu-west-1` (Irlanda) con autenticación basada en API (`API_AND_CONFIG_MAP`).
+* **Red aislada (VPC):** Configuración de red con subredes públicas y privadas en múltiples zonas de disponibilidad, etiquetadas para el descubrimiento automático de balanceadores de carga (`kubernetes.io/role/elb`).
 * **Optimización de Costos (Compute):** Uso de instancias EC2 Spot y arquitectura ARM en los *Managed Node Groups* para reducir el gasto operativo.
-* **Autenticación Sin Secretos (OIDC):** Conexión segura entre entidad  y AWS integradora IAM mediante OpenID Connect, eliminando la necesidad de almacenar llaves `AWS_ACCESS_KEY_ID` de larga duración.
-* **Gestión de Tráfico (AWS Load Balancer Controller):** Despliegue automatizado mediante **Helm** utilizando *IAM Roles for Service Accounts (IRSA)* para aprovisionar *Application Load Balancers (ALB)* de forma dinámica a partir de recursos `Ingress` de Kubernetes.
-* **Estado Remoto (Terraform Backend):** Almacenamiento centralizado del archivo `terraform.tfstate` en **Amazon S3** para permitir ejecuciones consistentes y destrucción limpia de recursos desde cualquier runner.
+* **Autenticación sin secretos (OIDC):** Conexión segura entre entidad  y AWS integradora IAM mediante OpenID Connect, eliminando la necesidad de almacenar llaves `AWS_ACCESS_KEY_ID` de larga duración.
+* **Gestión de tráfico (AWS Load Balancer Controller):** Despliegue automatizado mediante **Helm** utilizando *IAM Roles for Service Accounts (IRSA)* para aprovisionar *Application Load Balancers (ALB)* de forma dinámica a partir de recursos `Ingress` de Kubernetes.
+* **Estado remoto (Terraform Backend):** Almacenamiento centralizado del archivo `terraform.tfstate` en **Amazon S3** para permitir ejecuciones consistentes y destrucción limpia de recursos desde cualquier runner.
+* **Calculo de costos operativos (AWS Calculator):** Calculo granular de costos para la documentación SMTM.
 
 ---
 

@@ -1,4 +1,4 @@
-# 1. Repositorio de Imágenes Docker (Amazon ECR)
+# 1. Repositorio de imágenes docker (Amazon ECR)
 resource "aws_ecr_repository" "app_repo" {
   name                 = "${var.cluster_name}-app"
   image_tag_mutability = "MUTABLE"
@@ -9,7 +9,7 @@ resource "aws_ecr_repository" "app_repo" {
   }
 }
 
-# 2. Grupo de Subredes Privadas y Firewall para MySQL (Puerto 3306)
+# 2. Grupo de subredes privadas y firewall para MySQL (Puerto 3306)
 resource "aws_db_subnet_group" "mysql_subnets" {
   name       = "${var.cluster_name}-mysql-subnets"
   subnet_ids = module.vpc.private_subnets
@@ -28,7 +28,7 @@ resource "aws_security_group" "mysql_sg" {
   }
 }
 
-# 3. Instancia Gestionada de Amazon RDS (MySQL)
+# 3. Instancia gestionada de Amazon RDS (MySQL)
 resource "aws_db_instance" "mysql" {
   identifier             = "${var.cluster_name}-mysql"
   engine                 = "mysql"
