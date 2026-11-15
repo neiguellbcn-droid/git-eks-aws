@@ -1,4 +1,4 @@
-# Despliegue Automatizado de Amazon EKS con Terraform y GitHub Actions (OIDC)
+# Despliegue Automatizado de Amazon AWS - EKS con Terraform y GitHub Actions (OIDC)
 
 Implementa una infraestructura completa de **Amazon Elastic Kubernetes Service (EKS)** en AWS utilizando **Terraform** como herramienta de Infraestructura como Código (IaC) y **GitHub Actions** para la integración y entrega continua (CI/CD).
 
@@ -20,18 +20,31 @@ La arquitectura está diseñada siguiendo buenas prácticas de seguridad, optimi
 ## Estructura del Proyecto
 
 ```text
-.
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml      # Pipeline de CI/CD para aplicar o destruir la infraestructura
-├── main.tf                 # Definición de VPC, clúster EKS, roles IRSA y Helm releases
-├── autoscaling.tf          # Definición de Autoescalado
-├── providers.tf            # Configuración de backend S3 y proveedores (AWS, Kubernetes, Helm)
-├── apps.tf                 # Manifiestos de Kubernetes (Namespace, Deployment, Service e Ingress)
-└── variables.tf            # Variables de parametrización del entorno
+├── modules/        
+|   ├── cognito/            # Módulo aislado para autenticación
+|   |   └── main.tf         
+|   |   ├── variables.tf    
+|   |   └── outputs.tf
+|   └── eks-secrets/        # Módulo para inyectar config en EKS zero trusth
+|   |   └── main.tf
+|   |   ├── variables.tf
+|   |   └── outputs.tf
+└── enviroments/
+    └── prod/
+        ├── backend.tf              # Estado remoto en S3 + bloqueo DynamoDB
+        ├── main.tf                 # Definición de VPC, clúster EKS, roles IRSA y Helm releases
+        ├── autoscaling.tf          # Definición de Autoescalado
+        ├── providers.tf            # Configuración de backend S3 y proveedores (AWS, Kubernetes, Helm)
+        ├── apps.tf                 # Manifiestos de Kubernetes (Namespace, Deployment, Service e Ingress)
+        ├── variables.tf            # Variables de parametrización del entorno
+        ├── terraform.tfvars        # Valores reales (no para GIT)
+        └── outputs.tf
+
 ```
 
----
 
 ## Requisitos Previos
 
