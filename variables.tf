@@ -27,6 +27,46 @@ variable "dns_zone" {
   type        = string
   default     = "enreach$.com"
 }
+
+variable "vpc_cidr" {
+  description = "CIDR de la VPC"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "private_subnets" {
+  description = "CIDR de las subredes privadas"
+  type        = list(string)
+  default     = ["10.0.1.0/24", "10.0.2.0/24"]
+}
+
+variable "public_subnets" {
+  description = "CIDR de las subredes públicas"
+  type        = list(string)
+  default     = ["10.0.101.0/24", "10.0.102.0/24"]
+}
+
+variable "eks_managed_node_groups" {
+  description = "Configuración de los grupos de nodos gestionados por EKS"
+  type = map(object({
+    ami_type       = string
+    instance_types = list(string)
+    capacity_type  = string
+    min_size       = number
+    max_size       = number
+    desired_size   = number
+  })) 
+  default = {
+    spot_arm = {
+      ami_type       = "AL2023_ARM_64_STANDARD"
+      instance_types = ["t4g.medium", "t4g.small"]
+      capacity_type  = "SPOT"
+      min_size       = 1
+      max_size       = 2
+      desired_size   = 1
+  
+    }}
+}
 ###############################################################################
 ###   RECUERDA QUE DEBE ESTAR EL SECRETO DE LA BASE DE DATOS EN GITHUB (Settings -> Secrets and variables -> Actions -> New repository secret)   ##
 # y que debe ser llamado db_password, para que el workflow de GitHub Actions pueda desplegar la app en EKS y conectarse a la base de datos RDS MySQL
