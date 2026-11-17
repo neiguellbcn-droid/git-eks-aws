@@ -10,7 +10,7 @@ module "vpc" {
   version = "~> 5.0"
 
   name = "${var.cluster_name}-vpc"
-  cidr = "10.0.0.0/16"
+  cidr = var.vpc_cidr
 
   azs             = local.azs
   private_subnets = var.private_subnets
@@ -54,13 +54,12 @@ module "eks" {
 
   eks_managed_node_groups = {
     spot_arm = {
-      ami_type       = "AL2023_ARM_64_STANDARD"
-      instance_types = ["t4g.medium", "t4g.small"]
-      capacity_type  = "SPOT"
-
-      min_size     = 
-      max_size     = 2
-      desired_size = 1
+      ami_type       = var.eks_managed_node_groups["spot_arm"].ami_type
+      instance_types = var.eks_managed_node_groups["spot_arm"].instance_types
+      capacity_type  = var.eks_managed_node_groups["spot_arm"].capacity_type
+      min_size       = var.eks_managed_node_groups["spot_arm"].min_size
+      max_size       = var.eks_managed_node_groups["spot_arm"].max_size
+      desired_size   = var.eks_managed_node_groups["spot_arm"].desired_size
     }
   }
 }
