@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "bucket_name" {
   description = "Nombre del bucket S3 para almacenar el estado de Terraform"
   type        = string
-  default     = "tfstate-eks-300601069255"
+  default     = "tfstate-eks-123456789012"
 }
 
 variable key_s3 {
@@ -19,7 +19,7 @@ variable key_s3 {
 varable "dynamodb_table" {
   description = "Nombre de la tabla DynamoDB para el bloqueo del estado de Terraform"
   type        = string
-  default     = "tfstate-eks-300601069255-lock"
+  default     = "tfstate-eks-123456789012-lock"
 }
 
 variable "cluster_name" {
